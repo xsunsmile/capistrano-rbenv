@@ -38,7 +38,7 @@ Following options are available to manage your rbenv.
  * `:rbenv_ruby_dependencies` - dependency packages.
  * `:rbenv_ruby_version` - the ruby version to install. install `1.9.3-p194` by default.
  * `:rbenv_use_bundler` - controls whether installing bundler or not. `true` by default.
- * `:shell_source_files` - add rbenv path and init to shell source files. e.g. .bashrc. .bashrc .zshrc .profile .bash_profile by default
+ * `:shell_source_files` - add rbenv path and init to shell source files. e.g. `.bashrc. .bashrc .zshrc .profile .bash_profile` by default
 
 ## Contributing
 
