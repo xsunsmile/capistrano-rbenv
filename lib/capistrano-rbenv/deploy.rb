@@ -44,6 +44,10 @@ module Capistrano
             rbenv_use_bundler ? "#{rbenv_cmd} exec bundle" : 'bundle'
           }
 
+          _cset(:shell_source_files) {
+            %w[ .bashrc .zshrc .profile .bash_profile ]
+          }
+
           desc("Setup rbenv.")
           task(:setup, :except => { :no_release => true }) {
             dependencies
@@ -90,7 +94,24 @@ module Capistrano
           }
 
           task(:configure, :except => { :no_release => true }) {
-            # nop
+            configure = <<-E
+              for source_file in #{shell_source_files.join(' ')}
+              do
+                source_file=$HOME/$source_file
+                echo >> $source_file
+                included=$(egrep "PATH=(.*)#{rbenv_path}/bin" $source_file)
+                if [ "x$included" = "x"  ]; then
+                  echo "PATH=\\\$PATH:#{rbenv_path}/bin" >> $source_file
+                fi
+                included=$(egrep "eval(.*)rbenv init -" $source_file)
+                if [ "x$included" = "x"  ]; then
+                  echo "eval \\\"\\\$(rbenv init -)\\\"" >> $source_file
+                fi
+              done
+            E
+            tmp_conf = "/tmp/configure_rbenv.sh"
+            put configure, tmp_conf
+            run "sh #{tmp_conf} && rm #{tmp_conf}"
           }
 
           _cset(:rbenv_platform) {
